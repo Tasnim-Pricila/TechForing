@@ -1,7 +1,31 @@
-import { Typography } from '@mui/material';
-import React from 'react';
+import { Button, Grid, TextField, Typography } from '@mui/material';
+import { Box } from '@mui/system';
+import axios from 'axios';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Login = () => {
+    const [token, setToken] = useState('');
+    const [user, setUser] = useState({
+        email: '',
+        password: '',
+    })
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        console.log(user);
+        axios.post('https://tf-practical.herokuapp.com/api/login/', user)
+            .then(res => {
+                console.log(res.data, 'login')
+                const accessToken = res.data.access;
+                console.log(accessToken)
+                localStorage.setItem('accessToken', accessToken);
+                setToken(accessToken);
+            })
+            .catch(err => {
+                console.log(err.message)
+            })
+    }
+
     return (
         <div>
             <Typography variant='h4' sx={{
@@ -9,6 +33,64 @@ const Login = () => {
                 mt: 2
             }}>Login</Typography>
 
+            <form onSubmit={handleSubmit}>
+                <Grid container spacing={2} sx={{
+                    display: 'block',
+                    mt: 4
+                }}>
+                    <Grid item xs={12} md={6} sx={{ margin: 'auto' }}>
+                        <TextField
+                            variant="outlined"
+                            required
+                            fullWidth
+                            id="email"
+                            label="Email"
+                            name="email"
+                            autoComplete="off"
+                            onBlur={(e) => setUser({ ...user, email: e.target.value })}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={6} sx={{ margin: 'auto' }}>
+                        <TextField
+                            variant="outlined"
+                            required
+                            fullWidth
+                            name="password"
+                            label="Password"
+                            type="password"
+                            id="password"
+                            autoComplete="off"
+                            onBlur={(e) => setUser({ ...user, password: e.target.value })}
+                        />
+                    </Grid>
+                    <Grid item xs={12} md={6} sx={{ margin: 'auto' }}>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                        >
+                            Login
+                        </Button>
+                    </Grid>
+
+                    <Grid item xs={12} md={6} sx={{ margin: 'auto' }}>
+                        <Box sx={{
+                            display: 'flex'
+                        }}>
+                            <Typography> New to TechForing? </Typography>
+                            <Link to="/register" variant="body2"
+                                style={{
+                                    color: 'blue',
+                                    paddingLeft: 2
+                                }}>
+                                Register Now
+                            </Link>
+                        </Box>
+
+                    </Grid>
+                </Grid>
+            </form>
         </div>
     );
 };

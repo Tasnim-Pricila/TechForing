@@ -109,13 +109,13 @@ const Header = () => {
                             color: 'black'
                         }}>
                             {
-                                pages.map(page =>
+                                pages.map((page, index) =>
                                     <NavLink to={`/${page}`} style={{
                                         textDecoration: 'none',
                                         color: 'black',
                                         textTransform: 'uppercase',
                                         fontWeight: 'bold',
-                                    }}>
+                                    }} key={index}>
                                         {page}
                                     </NavLink>
                                 )
