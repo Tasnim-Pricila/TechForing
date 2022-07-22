@@ -30,7 +30,7 @@ const Register = () => {
             <Typography variant='h4' sx={{
                 textAlign: 'center',
                 mt: 2
-            }}>Login</Typography>
+            }}>Register</Typography>
 
             <form onSubmit={handleSubmit}>
                 <Grid container spacing={2} sx={{
@@ -83,7 +83,6 @@ const Register = () => {
                                 value={user?.gender}
                                 onChange={(e) => setUser({ ...user, gender: e.target.value })}
                             >
-                                <MenuItem value='None' disabled>None</MenuItem>
                                 <MenuItem value='Male'>Male</MenuItem>
                                 <MenuItem value='Female'>Female</MenuItem>
                                 <MenuItem value='Other'>Other</MenuItem>

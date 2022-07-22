@@ -5,7 +5,7 @@ import { NavLink, Link } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 
 const Header = () => {
-    const pages = ['Login', 'Register'];
+    const pages = ['Login', 'Register', 'Jobs', 'CreateJob'];
 
     const [anchorElNav, setAnchorElNav] = useState(null);
     const [anchorElUser, setAnchorElUser] = useState(null);
