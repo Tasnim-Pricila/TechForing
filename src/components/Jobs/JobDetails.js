@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { Button, Card, CardActionArea, CardContent, IconButton, Typography } from '@mui/material';
 import { Box } from '@mui/system';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
+import Api from '../../axios/Api';
 
 const JobDetails = () => {
     const { id } = useParams();
@@ -12,16 +12,14 @@ const JobDetails = () => {
 
     useEffect(() => {
         const getJobs = async () => {
-            await axios.get('https://tf-practical.herokuapp.com/api/job_post', {
+            await Api.get('/job_post', {
                 headers: {
                     authorization: `Bearer ${localStorage.getItem('accessToken')}`
                 }
             })
                 .then(res => {
-                    console.log(res.data)
                     const response = res.data;
                     const find = response.find(r => r.id == id);
-                    console.log(find);
                     setDetails(find);
                 })
                 .catch(err => {
@@ -29,7 +27,7 @@ const JobDetails = () => {
                 })
         }
         getJobs();
-    }, [])
+    }, [id])
 
 
     return (
@@ -37,7 +35,7 @@ const JobDetails = () => {
             <Card sx={{
                 boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
                 p: 1,
-                m: 10
+                m: {xs: 4, md: 10}
             }}>
                 <CardActionArea>
                     <CardContent sx={{ textTransform: 'capitalize' }}>

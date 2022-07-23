@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import { Button, FormControl, Grid, InputLabel, MenuItem, Select, TextareaAutosize, TextField } from '@mui/material';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { Button, FormControl, Grid, InputLabel, MenuItem, Select, TextareaAutosize, TextField, Typography } from '@mui/material';
+import Api from '../../axios/Api';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import Loading from '../LoadingButton/Loading';
 
 const CreateJob = () => {
-
+    const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
     const [job, setJob] = useState({
         jobTitle: '',
         lastDateOfApply: null,
@@ -20,23 +21,40 @@ const CreateJob = () => {
         jobDescription: '',
         department: '',
     });
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(job);
-        await axios.post('https://tf-practical.herokuapp.com/api/job_post/', job, {
+        setLoading(true);
+        await Api.post('/job_post/', job, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('accessToken')}`
             }
         })
             .then(res => {
                 console.log(res.data, 'Job Inserted')
+                setLoading(false);
+                toast.success('Job Created Successfully ', {
+                    theme: 'colored',
+                });
+                navigate('/jobs');
             })
             .catch(err => {
                 console.log(err.message)
+                toast.error( err.message, {
+                    theme: 'colored',
+                });
+                setLoading(false);
             })
     }
-    return (
+    
+    return loading ? ( <Loading/> ) :(
         <div>
+            <Typography variant='h4' sx={{
+                textAlign: 'center',
+                mt: 2
+            }}>
+                Create a Job Post
+            </Typography>
             <form onSubmit={handleSubmit}>
                 <Grid container spacing={2} sx={{
                     display: 'block',

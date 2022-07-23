@@ -1,50 +1,58 @@
-import { AppBar, Avatar, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
+import { AppBar, Avatar, Button, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from '@mui/material';
 import { Box, Container } from '@mui/system';
 import React, { useState } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
+import LogoutIcon from '@mui/icons-material/Logout';
+import { toast } from 'react-toastify';
 
 const Header = () => {
-    const pages = ['Login', 'Register', 'Jobs', 'CreateJob'];
-
+    const token = localStorage.getItem("accessToken");
+    const navigate = useNavigate();
     const [anchorElNav, setAnchorElNav] = useState(null);
-    const [anchorElUser, setAnchorElUser] = useState(null);
 
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
-    };
-    const handleOpenUserMenu = (event) => {
-        setAnchorElUser(event.currentTarget);
     };
 
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
     };
 
-    const handleCloseUserMenu = () => {
-        setAnchorElUser(null);
+    const handleLogout = () => {
+        localStorage.removeItem("accessToken");
+        toast.success('You are Logged Out ', {
+            theme: 'colored',
+        });
+        navigate('/login');
+
     };
+
     return (
         <div>
             <AppBar position="static">
                 <Container maxWidth="xl" >
                     <Toolbar>
                         {/* Large screen logo  */}
-                        <Link to='/'
-                            style={{
+                        <Typography
+                            variant="h6"
+                            noWrap
+                            component={Link}
+                            to="/"
+                            sx={{
                                 mr: 2,
                                 display: { xs: 'none', md: 'flex' },
                                 fontFamily: 'monospace',
                                 fontWeight: 700,
                                 fontSize: '20px',
-                                letterSpacing: '.3rem',
+                                letterSpacing: '.1rem',
                                 color: 'inherit',
                                 textDecoration: 'none',
                                 textTransform: 'uppercase'
                             }}
                         >
                             TechForing
-                        </Link>
+                        </Typography>
 
                         {/* Small screen menu icon  */}
                         <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -76,8 +84,74 @@ const Header = () => {
                                     display: { xs: 'block', md: 'none' },
                                 }}
                             >
-                                <NavLink to='/login'>Login</NavLink>
-                                <NavLink to='/register'>Register</NavLink>
+                                {
+                                    !token &&
+                                    <div>
+                                        <MenuItem>
+                                            <NavLink to='/login'
+                                                style={{
+                                                    textDecoration: 'none',
+                                                    color: 'black',
+                                                    textTransform: 'uppercase',
+                                                    fontWeight: 'bold',
+                                                }}
+                                            >
+                                                Login
+                                            </NavLink>
+                                        </MenuItem>
+                                        <MenuItem>
+                                            <NavLink to='/register' style={{
+                                                textDecoration: 'none',
+                                                color: 'black',
+                                                textTransform: 'uppercase',
+                                                fontWeight: 'bold',
+                                            }}>
+                                                Register
+                                            </NavLink>
+                                        </MenuItem>
+                                    </div>
+                                }
+                                {
+                                    token &&
+                                    <div>
+                                        <MenuItem>
+                                            <NavLink to='/jobs' style={{
+                                                textDecoration: 'none',
+                                                color: 'black',
+                                                textTransform: 'uppercase',
+                                                fontWeight: 'bold',
+                                            }}>
+                                                Jobs
+                                            </NavLink>
+                                        </MenuItem>
+                                        <MenuItem>
+                                            <NavLink to='/createJob' style={{
+                                                textDecoration: 'none',
+                                                color: 'black',
+                                                textTransform: 'uppercase',
+                                                fontWeight: 'bold',
+                                            }}
+                                            >
+                                                Create Job
+                                            </NavLink>
+                                        </MenuItem>
+                                        <MenuItem variant="outlined" endIcon={<LogoutIcon />}
+                                        onClick={handleLogout}
+                                        sx={{
+                                            color: 'black',
+                                            fontWeight: 'bold',
+                                            borderColor: 'black',
+                                            backgroundColor: 'white',
+                                            '&:hover': {
+                                                backgroundColor: '#182f59',
+                                                color: 'white',
+                                                borderColor: 'transparent'
+                                            }
+                                        }}>
+                                        Logout
+                                    </MenuItem>
+                                    </div>
+                                }
                             </Menu>
                         </Box>
 
@@ -85,13 +159,15 @@ const Header = () => {
                         <Typography
                             variant="h5"
                             noWrap
+                            component={Link}
+                            to="/"
                             sx={{
                                 mr: 2,
                                 display: { xs: 'flex', md: 'none' },
                                 flexGrow: 1,
                                 fontFamily: 'monospace',
                                 fontWeight: 700,
-                                letterSpacing: '.3rem',
+                                letterSpacing: '.1rem',
                                 color: 'inherit',
                                 textDecoration: 'none',
                             }}
@@ -108,64 +184,79 @@ const Header = () => {
                             textDecoration: 'none',
                             color: 'black'
                         }}>
+
                             {
-                                pages.map((page, index) =>
-                                    <NavLink to={`/${page}`} style={{
+                                token &&
+                                <>
+                                    <Button component={NavLink} to='/' sx={{
                                         textDecoration: 'none',
                                         color: 'black',
                                         textTransform: 'uppercase',
                                         fontWeight: 'bold',
-                                    }} key={index}>
-                                        {page}
+                                    }}>
+                                        Home
+                                    </Button>
+                                    <Button component={NavLink} to='/jobs' sx={{
+                                        textDecoration: 'none',
+                                        color: 'black',
+                                        textTransform: 'uppercase',
+                                        fontWeight: 'bold',
+                                    }}>
+                                        Jobs
+                                    </Button>
+                                    <Button component={NavLink} to='/createJob' sx={{
+                                        textDecoration: 'none',
+                                        color: 'black',
+                                        textTransform: 'uppercase',
+                                        fontWeight: 'bold',
+                                    }}>
+                                        Create Job
+                                    </Button>
+
+                                    <Button variant="outlined" endIcon={<LogoutIcon />}
+                                        onClick={handleLogout}
+                                        sx={{
+                                            color: 'black',
+                                            fontWeight: 'bold',
+                                            borderColor: 'black',
+                                            backgroundColor: 'white',
+                                            '&:hover': {
+                                                backgroundColor: '#182f59',
+                                                color: 'white',
+                                                borderColor: 'transparent'
+                                            }
+                                        }}>
+                                        Logout
+                                    </Button>
+                                </>
+                            }
+                            {
+                                !token &&
+                                <>
+                                    <NavLink to='/login' style={{
+                                        textDecoration: 'none',
+                                        color: 'black',
+                                        textTransform: 'uppercase',
+                                        fontWeight: 'bold',
+                                    }}>
+                                        Login
                                     </NavLink>
-                                )
+                                    <NavLink to='/register' style={{
+                                        textDecoration: 'none',
+                                        color: 'black',
+                                        textTransform: 'uppercase',
+                                        fontWeight: 'bold',
+                                    }}>
+
+                                        Register
+                                    </NavLink>
+                                </>
                             }
                         </Box>
-
-                        {/* Settings  */}
-                        {/* <Box sx={{
-                            flexGrow: 0,
-                            display: 'flex',
-                            gap: 2,
-                            alignItems: 'center'
-                        }}>
-
-                            <Menu
-                                sx={{ mt: '45px' }}
-                                id="menu-appbar"
-                                anchorEl={anchorElUser}
-                                anchorOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                keepMounted
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'right',
-                                }}
-                                open={Boolean(anchorElUser)}
-                                onClose={handleCloseUserMenu}
-                            >
-
-                                <MenuItem sx={{
-                                    display: 'flex',
-                                    flexDirection: 'column'
-                                }}>
-                                    <NavLink to='/login'>Login</NavLink>
-                                    <NavLink to='/register'>Register</NavLink>
-                                </MenuItem>
-
-                            </Menu>
-                            <Tooltip title="Open settings">
-                                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                    <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-                                </IconButton>
-                            </Tooltip>
-                        </Box> */}
                     </Toolbar>
                 </Container>
             </AppBar>
-        </div>
+        </div >
     );
 };
 

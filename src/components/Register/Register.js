@@ -1,10 +1,13 @@
 import { Button, FormControl, Grid, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import { Box } from '@mui/system';
-import axios from 'axios';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import Api from '../../axios/Api';
+import { toast } from 'react-toastify';
+import Loading from '../LoadingButton/Loading';
 
 const Register = () => {
+    const [loading, setLoading] = useState(false);
     const [user, setUser] = useState({
         full_name: '',
         birthDate: '',
@@ -13,19 +16,29 @@ const Register = () => {
         gender: '',
         password: ''
     })
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
         console.log(user);
-        axios.post('https://tf-practical.herokuapp.com/api/register/', user)
+        await Api.post('/register/', user)
             .then(res => {
-                console.log(res.data, 'Registration Successful')
+                console.log(res.data, 'Registration Successful');
+                setLoading(false);
+                toast.success('Registration Successful, Login Now ', {
+                    theme: 'colored',
+                });
             })
             .catch(err => {
-                console.log(err.message)
+                console.log(err)
+                toast.error( err.message, {
+                    theme: 'colored',
+                });
+                setLoading(false);
             })
+            e.target.reset();
     }
 
-    return (
+    return loading ? ( <Loading/> ) : (
         <div>
             <Typography variant='h4' sx={{
                 textAlign: 'center',
@@ -37,7 +50,7 @@ const Register = () => {
                     display: 'block',
                     mt: 4
                 }}>
-                    <Grid item xs={12} md={6} sx={{ margin: 'auto' }}>
+                    <Grid item xs={11} md={6} sx={{ margin: 'auto' }}>
                         <TextField
                             variant="outlined"
                             required
@@ -49,7 +62,7 @@ const Register = () => {
                             onBlur={(e) => setUser({ ...user, full_name: e.target.value })}
                         />
                     </Grid>
-                    <Grid item xs={12} md={6} sx={{ margin: 'auto' }}>
+                    <Grid item xs={11} md={6} sx={{ margin: 'auto' }}>
                         <TextField
                             variant="outlined"
                             required
@@ -61,7 +74,8 @@ const Register = () => {
                             onBlur={(e) => setUser({ ...user, email: e.target.value })}
                         />
                     </Grid>
-                    <Grid item xs={12} md={6} sx={{ margin: 'auto' }}>
+                    <Grid item xs={11} md={6} sx={{ margin: 'auto' }}>
+                    <InputLabel id="lastDateOfApply" sx={{ my: 1 }}>Date of Birth: </InputLabel>
                         <TextField
                             variant="outlined"
                             required
@@ -73,7 +87,7 @@ const Register = () => {
                             onBlur={(e) => setUser({ ...user, birthDate: e.target.value })}
                         />
                     </Grid>
-                    <Grid item xs={12} md={6} sx={{ margin: 'auto' }}>
+                    <Grid item xs={11} md={6} sx={{ margin: 'auto' }}>
                         <FormControl fullWidth>
                             <InputLabel id="demo-simple-select-label">Gender</InputLabel>
                             <Select
@@ -89,7 +103,7 @@ const Register = () => {
                             </Select>
                         </FormControl>
                     </Grid>
-                    <Grid item xs={12} md={6} sx={{ margin: 'auto' }}>
+                    <Grid item xs={11} md={6} sx={{ margin: 'auto' }}>
                         <TextField
                             variant="outlined"
                             required
@@ -102,7 +116,7 @@ const Register = () => {
                             onBlur={(e) => setUser({ ...user, phone_number: e.target.value })}
                         />
                     </Grid>
-                    <Grid item xs={12} md={6} sx={{ margin: 'auto' }}>
+                    <Grid item xs={11} md={6} sx={{ margin: 'auto' }}>
                         <TextField
                             variant="outlined"
                             required
@@ -112,29 +126,32 @@ const Register = () => {
                             type="password"
                             id="password"
                             autoComplete="off"
+                            helperText="Password must be 8 characters and include both numbers and letters"
                             onBlur={(e) => setUser({ ...user, password: e.target.value })}
                         />
                     </Grid>
-                    <Grid item xs={12} md={6} sx={{ margin: 'auto' }}>
+                    <Grid item xs={11} md={6} sx={{ margin: 'auto' }}>
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
                             color="primary"
                         >
-                            Login
+                            Register Now
                         </Button>
                     </Grid>
 
-                    <Grid item xs={12} md={6} sx={{ margin: 'auto' }}>
+                    <Grid item xs={11} md={6} sx={{ margin: 'auto' }}>
                         <Box sx={{
-                            display: 'flex'
+                            display: 'flex',
+                            mb: 4
                         }}>
                             <Typography> Already Have an Account? </Typography>
                             <Link to="/login" variant="body2"
                                 style={{
                                     color: 'blue',
-                                    paddingLeft: 2
+                                    paddingLeft: 2,
+                                    textDecoration: 'none'
                                 }}>
                                 Login
                             </Link>

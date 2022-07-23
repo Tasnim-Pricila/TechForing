@@ -1,36 +1,45 @@
-import { Card, CardActionArea, CardContent, CardMedia, Grid, Typography, Box, Button, IconButton } from '@mui/material';
+import { Card, CardActionArea, CardContent, Grid, Typography, Box, Button, IconButton } from '@mui/material';
 import React from 'react';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
 import { useNavigate } from 'react-router-dom';
 import DeleteIcon from '@mui/icons-material/DeleteOutline';
-import axios from 'axios';
+import Api from '../../axios/Api';
+import { toast } from 'react-toastify';
 
-
-const Job = ({ job, setJobs, jobs }) => {
+const Job = ({ job, setJobs, jobs, loading, setLoading }) => {
 
     const navigate = useNavigate();
-    const { id, jobTitle, level, vacancies, jobType, lastDateOfApply, postDate, lastUpdated, shift, location, jobDescription, department } = job;
+    const { id, jobTitle, vacancies, jobType, shift, location } = job;
 
     const handleDetails = (id) => {
         navigate(`/jobs/${id}`)
     }
     const handleRemove = async (id) => {
-        await axios.delete(`https://tf-practical.herokuapp.com/api/job_update/${id}`, {
+        setLoading(true);
+        await Api.delete(`/job_update/${id}`, {
             headers: {
                 authorization: `Bearer ${localStorage.getItem('accessToken')}`
             }
         })
             .then(res => {
                 console.log(res.config, 'Successful');
-                const a = jobs.filter(job => job.id !== id);
-                setJobs(a)
+                setLoading(false);
+                const remainingJobs = jobs.filter(job => job.id !== id);
+                setJobs(remainingJobs);
+                toast.success('Job Deleted Successfully ', {
+                    theme: 'colored',
+                });
             })
             .catch(err => {
                 console.log(err.message)
+                toast.error( err.message, {
+                    theme: 'colored',
+                });
+                setLoading(false);
             })
     }
     return (
-        <Grid item xs={4}>
+        <Grid item xs={12} md={4}>
             <Card sx={{ boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px', p: 1 }}>
                 <CardActionArea>
                     <CardContent sx={{ textTransform: 'capitalize' }}>
@@ -38,6 +47,7 @@ const Job = ({ job, setJobs, jobs }) => {
                             sx={{ fontWeight: 700 }}>
                             {jobTitle}
                         </Typography>
+                        
                         <Box sx={{
                             display: 'flex',
                             gap: 10,
