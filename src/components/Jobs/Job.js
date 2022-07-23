@@ -23,12 +23,12 @@ const Job = ({ job, setJobs, jobs, loading, setLoading }) => {
         })
             .then(res => {
                 console.log(res.config, 'Successful');
-                setLoading(false);
                 const remainingJobs = jobs.filter(job => job.id !== id);
                 setJobs(remainingJobs);
                 toast.success('Job Deleted Successfully ', {
                     theme: 'colored',
                 });
+                setLoading(false);
             })
             .catch(err => {
                 console.log(err.message)
